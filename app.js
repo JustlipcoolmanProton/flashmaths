@@ -1,5 +1,5 @@
 // ===== APP STATE =====
-// let currentDiff = 'medium';
+let currentDiff = 'medium';
 let currentSubject = '';
 let currentTopic = '';
 let currentGenKey = '';

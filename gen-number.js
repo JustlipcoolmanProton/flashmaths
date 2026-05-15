@@ -12,7 +12,8 @@ const genNumber = {
         } else {
             styles.push(() => { const a=rand(2,6),b=rand(2,5),c=rand(2,5),ans=(-a*-b)-c; return {q:`Calculate: $(-${a} \\times -${b}) - ${c}$`,ans:ans.toString(),opt:genOpts(ans,()=>ans+rand(-8,8)||2)}; });
             styles.push(() => { const bank=rand(-100,-20),pay=rand(30,80),ans=bank+pay; return {q:`Bank balance: $\\$${bank}$. Deposit $\\$${pay}$. New balance?`,ans:`\\$${ans}`,opt:genOpts(`\\$${ans}`,()=>`\\$${ans+rand(-15,15)||5}`)}; });
-            styles.push(() => { const a=rand(4,12),b=rand(2,6),c=rand(2,5),ans=(-a+b)/-c; return {q:`Calculate: \\frac{-${a} + ${b}}{-${c}} (as decimal if needed)`,ans:''+(Math.round(ans*100)/100),opt:genOpts(Math.round(ans*100)/100,()=>Math.round((ans+rand(-2,2)||1)*100)/100)}; });
+            styles.push(() => { const a=rand(4,12),b=rand(2,6),c=rand(2,5),ans=(-a+b)/-c; return {q:`Calculate: $\\frac{-${a} + ${b}}{-${c}}$ (as decimal if needed)`,ans:''+(Math.round(ans*100)/100),opt:genOpts(Math.round(ans*100)/100,()=>Math.round((ans+rand(-2,2)||1)*100)/100)}; });
+            styles.push(() => { const a=rand(2,5),b=rand(3,6),c=rand(2,4),ans=Math.pow(-a,c)+b; return {q:`Calculate: $(-${a})^{${c}} + ${b}$`,ans:ans.toString(),opt:genOpts(ans,()=>ans+rand(-5,5)||2)}; });
         }
         return pick(styles)();
     },

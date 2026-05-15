@@ -9,12 +9,19 @@ const genAlgebra = {
         } else if (diff === 'medium') {
             styles.push(() => { const a=rand(2,6),x=rand(2,10),b=rand(2,10),c=a*x+b; return {q:`Solve $${a}x + ${b} = ${c}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-5,5)||2}`)}; });
             styles.push(() => { const a=rand(2,5),x=rand(2,8),b=rand(3,12),c=a*x-b; return {q:`Solve $${a}x - ${b} = ${c}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-4,4)||1}`)}; });
-            styles.push(() => { const x=rand(2,10),a=rand(2,5),b=rand(2,8),c=(x/a)+b; return {q:`Solve \\frac{x}{${a}} + ${b} = ${c}`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-4,4)*a||a}`)}; });
+            styles.push(() => { const x=rand(2,10),a=rand(2,5),b=rand(2,8),c=(x/a)+b; return {q:`Solve $\\frac{x}{${a}} + ${b} = ${c}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-4,4)*a||a}`)}; });
             styles.push(() => { const n=rand(3,12),m=rand(2,5),add=rand(2,8),r=n*m+add; return {q:`Think of a number, multiply by $${m}$, add $${add}$, get $${r}$. What is the number?`,ans:`${n}`,opt:genOpts(n,()=>n+rand(-4,4)||1)}; });
         } else {
-            styles.push(() => { const a=rand(3,7),a2=rand(1,a-1),x=rand(2,8),b=rand(2,10),c=(a*x+b)-(a2*x); return {q:`Solve $${a}x + ${b} = ${a2===1?'':a2}x + ${c}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-5,5)||2}`)}; });
-            styles.push(() => { const x=rand(2,6),a=rand(2,4),b=rand(1,5),r=a*(x+b); return {q:`Solve $${a}(x + ${b}) = ${r}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-4,4)||1}`)}; });
-            styles.push(() => { const x=rand(2,8),a=rand(2,5),b=rand(2,8),c=rand(2,4),d=(a*x+b)/c; return {q:`Solve \\frac{${a}x + ${b}}{${c}} = ${d}`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-3,3)||1}`)}; });
+            styles.push(() => {
+                const a=rand(3,7), a2=rand(1,a-1), x=rand(2,10), b=rand(2,15), c=(a*x+b)-(a2*x);
+                const q = `Solve $${a}x + ${b} = ${a2===1?'':a2}x + ${c}$`;
+                return {q, ans:`x = ${x}`, opt:genOpts(`x = ${x}`, () => `x = ${x+rand(-5,5)||2}`)};
+            });
+            styles.push(() => {
+                const x=rand(2,8), a=rand(3,6), b=rand(2,7), r=a*(x-b);
+                return {q:`Solve $${a}(x - ${b}) = ${r}$`, ans:`x = ${x}`, opt:genOpts(`x = ${x}`, () => `x = ${x+rand(-4,4)||1}`)};
+            });
+            styles.push(() => { const x=rand(2,8),a=rand(2,5),b=rand(2,8),c=rand(2,4),d=(a*x+b)/c; return {q:`Solve $\\frac{${a}x + ${b}}{${c}} = ${d}$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-3,3)||1}`)}; });
             styles.push(() => { const x=rand(3,9),a=rand(2,10),b=x*x+a; return {q:`Solve $x^2 + ${a} = ${b}$ for $x > 0$`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-3,3)||1}`)}; });
         }
         return pick(styles)();
@@ -32,6 +39,13 @@ const genAlgebra = {
         styles.push(() => { const s=mkSys(); return {q:`$${s.a===1?'':s.a}x + ${s.b===1?'':s.b}y = ${s.c1}$ and $${s.d===1?'':s.d}x + ${s.e===1?'':s.e}y = ${s.c2}$. Find $y$.`,ans:`y = ${s.y}`,opt:genOpts(`y = ${s.y}`,()=>`y = ${s.y+rand(-4,4)||1}`)}; });
         if (diff === 'hard') {
             styles.push(() => { const x=rand(2,6),y=rand(2,6),a=rand(2,4),b=rand(2,4),c1=a*x+b*y,m=rand(2,3),c=y-m*x; return {q:`$${a}x + ${b}y = ${c1}$ and $y = ${m}x ${c>=0?'+':'-'} ${Math.abs(c)}$. Find $x$.`,ans:`x = ${x}`,opt:genOpts(`x = ${x}`,()=>`x = ${x+rand(-3,3)||1}`)}; });
+            styles.push(() => {
+                const x = rand(-5, 5), y = rand(-5, 5);
+                if (x === 0 && y === 0) return {q: `$x+y=0$ and $x-y=0$. Find $x$.`, ans: `x = 0`, opt: genOpts(`x = 0`, () => `x = ${rand(-2,2)}`)};
+                const a = rand(2, 4), b = rand(2, 4), c1 = a*x + b*y;
+                const d = rand(2, 4), e = -rand(2, 4), c2 = d*x + e*y;
+                return {q: `$${a}x + ${b}y = ${c1}$ and $${d}x ${e < 0 ? '-' : '+'} ${Math.abs(e)}y = ${c2}$. Find $x$.`, ans: `x = ${x}`, opt: genOpts(`x = ${x}`, () => `x = ${x+rand(-3,3)||1}`)};
+            });
         }
         styles.push(() => { const a=rand(2,5),c=rand(3,7),na=rand(1,4),nc=rand(1,4),tot=a*na+c*nc; const na2=rand(1,4),nc2=rand(1,4),tot2=a*na2+c*nc2; if(na*nc2===nc*na2)nc2++; return {q:`$${na}$ adult and $${nc}$ child tickets cost $\\$${tot}$. $${na2}$ adult and $${nc2}$ child cost $\\$${a*na2+c*nc2}$. Adult price?`,ans:`\\$${a}`,opt:genOpts(`\\$${a}`,()=>`\\$${a+rand(-3,3)||1}`)}; });
         return pick(styles)();

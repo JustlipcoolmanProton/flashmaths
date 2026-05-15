@@ -1,6 +1,13 @@
 const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const randItem = arr => arr[rand(0, arr.length - 1)];
-const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+const shuffle = arr => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+};
 const pick = arr => arr[rand(0, arr.length - 1)];
 
 function genOpts(correct, wrongFn) {
