@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashMaths — Dynamic Learning Hub</title>
+    <meta name="description" content="FlashMaths: an adaptive, procedurally-generated math revision engine.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <header id="app-header">
+        <div class="header-inner">
+            <div class="logo-group">
+                <div class="logo-mark">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs><linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                </div>
+                <h1 class="logo-text">FlashMaths</h1>
+            </div>
+            <p class="header-sub">Adaptive Revision Engine</p>
+            <div class="diff-bar">
+                <button class="diff-btn" data-diff="easy">Easy</button>
+                <button class="diff-btn active" data-diff="medium">Medium</button>
+                <button class="diff-btn" data-diff="hard">Hard</button>
+                <div class="diff-indicator" id="diff-indicator"></div>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-main">
+        <!-- VIEW: Dashboard -->
+        <section id="view-dashboard" class="view active">
+            <div class="dash-grid">
+                <div class="dash-left">
+                    <h2 class="view-title">Curriculum</h2>
+                    <div class="cat-grid" id="category-grid"></div>
+                </div>
+                <aside class="dash-right" id="sidebar">
+                    <div class="insight-card smart-card">
+                        <h3 class="insight-title" style="color:var(--accent-light);">Smart Practice</h3>
+                        <p class="view-sub" style="font-size:0.85rem; margin-bottom:1rem; color:#cbd5e1;">A generated mix of topics. Starts random, then dynamically targets your weakest areas.</p>
+                        <button class="primary-btn" id="btn-smart-session" style="width:100%; padding:0.75rem;">Start Smart Session</button>
+                    </div>
+                    <div class="insight-card">
+                        <h3 class="insight-title">Performance</h3>
+                        <div class="stat-row">
+                            <div class="stat">
+                                <span class="stat-num" id="stat-total-solved">0</span>
+                                <span class="stat-lbl">Solved</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-num" id="stat-accuracy">0%</span>
+                                <span class="stat-lbl">Accuracy</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <h3 class="insight-title">Needs Work</h3>
+                        <ul id="struggle-list" class="struggle-list">
+                            <li class="empty-hint">Complete quizzes to unlock insights.</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- VIEW: Topics -->
+        <section id="view-topics" class="view">
+            <button class="back-btn" id="btn-back-dash">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                Dashboard
+            </button>
+            <h2 class="view-title gradient-text" id="current-category-title"></h2>
+            <p class="view-sub">Choose a topic to begin practice.</p>
+            <div class="topic-list" id="topic-list"></div>
+        </section>
+
+        <!-- VIEW: Quiz -->
+        <section id="view-quiz" class="view">
+            <div class="quiz-chrome">
+                <button class="back-btn" id="btn-end-quiz">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    Exit
+                </button>
+                <div class="quiz-info">
+                    <span class="pill" id="quiz-topic-pill">Topic</span>
+                    <span class="q-counter" id="q-counter">1 / 10</span>
+                </div>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+            <div class="q-card">
+                <div class="q-diagram" id="q-diagram"></div>
+                <div class="q-text" id="q-text"></div>
+            </div>
+            <!-- Dynamic Options Container -->
+            <div id="opts-container"></div>
+            <div class="quiz-footer">
+                <button class="primary-btn" id="next-btn" style="display:none">Next Question</button>
+            </div>
+        </section>
+
+        <!-- VIEW: Results -->
+        <section id="view-results" class="view">
+            <div class="results-wrap">
+                <div class="trophy-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#trophyGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs><linearGradient id="trophyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                    </svg>
+                </div>
+                <h2 class="gradient-text results-title">Practice Complete</h2>
+                <p class="results-sub">
+                    <span id="result-topic"></span> &mdash;
+                    <span id="result-diff" class="diff-highlight"></span>
+                </p>
+                <div class="big-score">
+                    <span id="big-score-num">0</span><span class="big-score-of">/ 10</span>
+                </div>
+                <div class="result-bar-track"><div class="result-bar-fill" id="result-bar-fill"></div></div>
+                <p class="result-feedback" id="result-feedback"></p>
+                <div class="result-btns">
+                    <button class="outline-btn" id="btn-retry">Retry</button>
+                    <button class="primary-btn" id="btn-home">Dashboard</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="gen-helpers.js"></script>
+    <script src="gen-algebra.js"></script>
+    <script src="gen-geometry.js"></script>
+    <script src="gen-number.js"></script>
+    <script src="generators.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
