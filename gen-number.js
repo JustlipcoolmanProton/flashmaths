@@ -50,6 +50,125 @@ const genNumber = {
         }
         return pick(styles)();
     },
+    FDP(diff) {
+        const styles = [];
+        if (diff === 'easy') {
+            styles.push(() => {
+                const p = rand(1, 19) * 5;
+                return { q: `Write $${p}\\%$ as a decimal.`, ans: (p / 100).toString(), opt: genOpts(p / 100, () => (p + rand(-15, 15)) / 100) };
+            });
+            styles.push(() => {
+                const d = rand(1, 9) / 10;
+                return { q: `Write $${d}$ as a percentage.`, ans: `${d * 100}\\%`, opt: genOpts(`${d * 100}\\%`, () => `${d * 100 + rand(-30, 30)}\\%`) };
+            });
+            styles.push(() => {
+                const p = rand(1, 10) * 10, amt = rand(1, 10) * 20, ans = (p / 100) * amt;
+                return { q: `Find $${p}\\%$ of $\\$${amt}$.`, ans: `\\$${ans}`, opt: genOpts(`\\$${ans}`, () => `\\$${ans + rand(-10, 10)}`) };
+            });
+        } else if (diff === 'medium') {
+            styles.push(() => {
+                const f = randItem([[1, 4, '0.25'], [3, 4, '0.75'], [1, 5, '0.2'], [2, 5, '0.4'], [1, 8, '0.125']]);
+                return { q: `Write $\\frac{${f[0]}}{${f[1]}}$ as a decimal.`, ans: f[2], opt: genOpts(f[2], () => (parseFloat(f[2]) + rand(-3, 3) * 0.05).toFixed(3).replace(/\.?0+$/, '')) };
+            });
+            styles.push(() => {
+                const a = rand(1, 5), b = rand(2, 6), c = rand(1, 5), d = rand(2, 6);
+                const num = a * d + c * b, den = b * d;
+                return { q: `Calculate: $\\frac{${a}}{${b}} + \\frac{${c}}{${d}}$`, ans: `\\frac{${num}}{${den}}`, opt: genOpts(`\\frac{${num}}{${den}}`, () => `\\frac{${num + rand(-5, 5)}}{${den + rand(-2, 2)}}`) };
+            });
+        } else {
+            styles.push(() => {
+                const p = rand(5, 40), amt = rand(100, 500), ans = amt * (1 + p / 100);
+                return { q: `Increase $\\$${amt}$ by $${p}\\%$.`, ans: `\\$${ans.toFixed(0)}`, opt: genOpts(`\\$${ans.toFixed(0)}`, () => `\\$${(ans + rand(-50, 50)).toFixed(0)}`) };
+            });
+            styles.push(() => {
+                const a = rand(1, 4), b = rand(2, 5), c = rand(1, 4), d = rand(2, 5);
+                const num = a * c, den = b * d;
+                return { q: `Calculate: $\\frac{${a}}{${b}} \\times \\frac{${c}}{${d}}$`, ans: `\\frac{${num}}{${den}}`, opt: genOpts(`\\frac{${num}}{${den}}`, () => `\\frac{${num + rand(-1, 1)}}{${den + rand(-5, 5)}}`) };
+            });
+        }
+        return pick(styles)();
+    },
+    Statistics(diff) {
+        const styles = [];
+        const mkData = (n, min, max) => Array.from({ length: n }, () => rand(min, max));
+
+        styles.push(() => {
+            const data = mkData(5, 2, 12).sort((a,b)=>a-b);
+            const mean = Math.round(data.reduce((a, b) => a + b) / data.length * 10) / 10;
+            return { q: `Find the mean of: $${data.join(', ')}$`, ans: mean.toString(), opt: genOpts(mean, () => (mean + rand(-2, 2) || 1).toFixed(1)) };
+        });
+
+        styles.push(() => {
+            const data = mkData(5, 2, 15).sort((a,b)=>a-b);
+            const range = Math.max(...data) - Math.min(...data);
+            return { q: `Find the range of: $${data.join(', ')}$`, ans: range.toString(), opt: genOpts(range, () => range + rand(-3, 3) || 1) };
+        });
+
+        if (diff === 'medium' || diff === 'hard') {
+            styles.push(() => {
+                const data = mkData(5, 2, 15).sort((a,b)=>a-b);
+                const median = data[2];
+                return { q: `Find the median of: $${data.join(', ')}$`, ans: median.toString(), opt: genOpts(median, () => median + rand(-3, 3) || 1) };
+            });
+            styles.push(() => {
+                const mode = rand(2, 10), other = [rand(2, 10), rand(2, 10)];
+                const data = shuffle([mode, mode, mode, other[0], other[1]]);
+                return { q: `Find the mode of: $${data.join(', ')}$`, ans: mode.toString(), opt: genOpts(mode, () => mode + rand(-2, 2) || 1) };
+            });
+        }
+
+        if (diff === 'hard') {
+            styles.push(() => {
+                const data = mkData(4, 5, 15);
+                const currentMean = data.reduce((a,b)=>a+b) / 4;
+                const targetMean = Math.ceil(currentMean) + 1;
+                const needed = (targetMean * 5) - data.reduce((a,b)=>a+b);
+                return { q: `Four numbers have a mean of $${currentMean}$. What fifth number is needed to make the mean $${targetMean}$?`, ans: needed.toString(), opt: genOpts(needed, () => needed + rand(-5, 5) || 2) };
+            });
+        }
+        return pick(styles)();
+    },
+    IndicesSurds(diff) {
+        const styles = [];
+        if (diff === 'easy') {
+            styles.push(() => {
+                const a = rand(2, 10), b = rand(2, 5), c = rand(2, 5);
+                const ans = `${a}^{${b + c}}`;
+                return { q: `Simplify: $${a}^{${b}} \\times ${a}^{${c}}$`, ans, opt: genOpts(ans, () => `${a}^{${b + c + rand(-3, 3)}}`) };
+            });
+            styles.push(() => {
+                const a = rand(2, 9);
+                return { q: `Value of $${a}^0$?`, ans: `1`, opt: shuffle(['1', '0', `${a}`, `${-a}`]) };
+            });
+        } else if (diff === 'medium') {
+            styles.push(() => {
+                const a = rand(2, 6), b = rand(2, 3);
+                const val = Math.pow(a, b);
+                const ans = `\\frac{1}{${val}}`;
+                return { q: `Calculate $${a}^{-${b}}$`, ans, opt: genOpts(ans, () => randItem([`\\frac{1}{${val + rand(-5, 5)}}`, `${val}`, `-${val}`, `\\frac{1}{${a * b}}`])) };
+            });
+            styles.push(() => {
+                const s = randItem([8, 12, 18, 20, 24, 27, 28, 32, 40, 44, 45, 48, 50]);
+                let a = 1, b = s;
+                for (let i = 2; i * i <= s; i++) { if (s % (i * i) === 0) { a = i; b = s / (i * i); } }
+                const ans = `${a > 1 ? a : ''}\\sqrt{${b}}`;
+                return { q: `Simplify $\\sqrt{${s}}$`, ans, opt: genOpts(ans, () => `${rand(1, 4)}\\sqrt{${randItem([2, 3, 5, 6, 7])}}`) };
+            });
+        } else {
+            styles.push(() => {
+                const a = randItem([4, 9, 16, 25]), b = randItem(['1/2', '3/2']);
+                const res = b === '1/2' ? Math.sqrt(a) : Math.pow(Math.sqrt(a), 3);
+                return { q: `Calculate $${a}^{${b}}$`, ans: res.toString(), opt: genOpts(res, () => res + rand(-10, 10)) };
+            });
+            styles.push(() => {
+                const a = rand(2, 5), b = rand(2, 5);
+                const s = a * a * b;
+                const ans = `${a}\\sqrt{${b}}`;
+                return { q: `Write $\\sqrt{${s}}$ in the form $a\\sqrt{b}$.`, ans, opt: genOpts(ans, () => `${a + rand(-1, 2)}\\sqrt{${b + rand(-1, 1)}}`) };
+            });
+        }
+        return pick(styles)();
+    },
     SDT(diff) {
         const styles = [];
         if (diff === 'easy') {

@@ -32,6 +32,8 @@ const curriculum = {
         icon: ICONS.geometry,
         topics: {
             "Pythagoras": "Pythagoras",
+            "Trigonometry": "Trigonometry",
+            "Angles": "Angles",
             "Area & Perimeter": "AreaVolume",
             "Volume & Surface Area": "AreaVolume"
         }
@@ -40,6 +42,9 @@ const curriculum = {
         icon: ICONS.number,
         topics: {
             "Negative Numbers": "Negatives",
+            "Fractions, Decimals & %": "FDP",
+            "Statistics": "Statistics",
+            "Indices & Surds": "IndicesSurds",
             "Standard Form": "StandardForm",
             "Probability": "Probability"
         }
