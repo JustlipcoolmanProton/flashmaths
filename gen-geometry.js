@@ -36,6 +36,143 @@ const genGeometry = {
         }
         return pick(styles)();
     },
+    Trigonometry(diff) {
+        const styles = [];
+        const degToRad = d => d * Math.PI / 180;
+        const radToDeg = r => r * 180 / Math.PI;
+
+        const mkTri = () => {
+            const angle = rand(25, 65);
+            const hyp = rand(10, 25);
+            const opp = Math.round(hyp * Math.sin(degToRad(angle)) * 10) / 10;
+            const adj = Math.round(hyp * Math.cos(degToRad(angle)) * 10) / 10;
+            return { angle, hyp, opp, adj };
+        };
+
+        styles.push(() => {
+            const t = mkTri();
+            const ans = t.opp.toFixed(1);
+            return {
+                q: `Find the length of the opposite side (to 1 d.p.)`,
+                diagram: trigSVG({ hyp: t.hyp, angle: t.angle, unknown: 'opp' }),
+                ans: `${ans}\\text{ cm}`,
+                opt: genOpts(`${ans}\\text{ cm}`, () => `${(t.opp + rand(-5, 5) || 1).toFixed(1)}\\text{ cm}`)
+            };
+        });
+
+        styles.push(() => {
+            const t = mkTri();
+            const ans = t.adj.toFixed(1);
+            return {
+                q: `Find the length of the adjacent side (to 1 d.p.)`,
+                diagram: trigSVG({ hyp: t.hyp, angle: t.angle, unknown: 'adj' }),
+                ans: `${ans}\\text{ cm}`,
+                opt: genOpts(`${ans}\\text{ cm}`, () => `${(t.adj + rand(-5, 5) || 1).toFixed(1)}\\text{ cm}`)
+            };
+        });
+
+        styles.push(() => {
+            const t = mkTri();
+            const ans = t.angle.toString();
+            return {
+                q: `Find the angle $\\theta$ (to nearest degree)`,
+                diagram: trigSVG({ opp: t.opp, hyp: t.hyp, unknown: 'angle' }),
+                ans: `${ans}^\\circ`,
+                opt: genOpts(`${ans}^\\circ`, () => `${t.angle + rand(-10, 10) || 3}^\\circ`)
+            };
+        });
+
+        if (diff === 'medium' || diff === 'hard') {
+            styles.push(() => {
+                const t = mkTri();
+                const ans = t.opp.toFixed(1);
+                return {
+                    q: `Find $x$ (to 1 d.p.)`,
+                    diagram: trigSVG({ adj: t.adj, angle: t.angle, unknown: 'opp' }),
+                    ans: `${ans}\\text{ cm}`,
+                    opt: genOpts(`${ans}\\text{ cm}`, () => `${(t.opp + rand(-5, 5) || 1).toFixed(1)}\\text{ cm}`)
+                };
+            });
+        }
+
+        if (diff === 'hard') {
+            styles.push(() => {
+                const t = mkTri();
+                const ans = t.hyp.toFixed(1);
+                return {
+                    q: `Find the hypotenuse (to 1 d.p.)`,
+                    diagram: trigSVG({ opp: t.opp, angle: t.angle, unknown: 'hyp' }),
+                    ans: `${ans}\\text{ cm}`,
+                    opt: genOpts(`${ans}\\text{ cm}`, () => `${(t.hyp + rand(-5, 5) || 1).toFixed(1)}\\text{ cm}`)
+                };
+            });
+        }
+
+        return pick(styles)();
+    },
+    Angles(diff) {
+        const styles = [];
+
+        styles.push(() => {
+            const a1 = rand(30, 80), a2 = rand(30, 80);
+            const ans = 180 - a1 - a2;
+            return {
+                q: `Find the missing angle in the triangle.`,
+                diagram: anglesSVG('triangle', { a1, a2, unknown: 'a3' }),
+                ans: `${ans}^\\circ`,
+                opt: genOpts(`${ans}^\\circ`, () => `${ans + rand(-20, 20) || 5}^\\circ`)
+            };
+        });
+
+        styles.push(() => {
+            const a1 = rand(40, 140);
+            const ans = 180 - a1;
+            return {
+                q: `Find the missing angle on the straight line.`,
+                diagram: anglesSVG('line', { a1, unknown: 'a2' }),
+                ans: `${ans}^\\circ`,
+                opt: genOpts(`${ans}^\\circ`, () => `${ans + rand(-20, 20) || 5}^\\circ`)
+            };
+        });
+
+        if (diff === 'medium' || diff === 'hard') {
+            styles.push(() => {
+                const a1 = rand(40, 140);
+                const rel = randItem(['alternate', 'corresponding']);
+                return {
+                    q: `Find the missing angle. The lines with arrows are parallel.`,
+                    diagram: anglesSVG('parallel', { a1, relation: rel }),
+                    ans: `${a1}^\\circ`,
+                    opt: genOpts(`${a1}^\\circ`, () => `${a1 + rand(-20, 20) || 10}^\\circ`)
+                };
+            });
+
+            styles.push(() => {
+                const a1 = rand(60, 120), a2 = rand(60, 120), a3 = rand(60, 100);
+                const ans = 360 - a1 - a2 - a3;
+                return {
+                    q: `Find the missing angle in the quadrilateral.`,
+                    ans: `${ans}^\\circ`,
+                    opt: genOpts(`${ans}^\\circ`, () => `${ans + rand(-30, 30) || 10}^\\circ`)
+                };
+            });
+        }
+
+        if (diff === 'hard') {
+            styles.push(() => {
+                const sides = rand(5, 8);
+                const ans = (sides - 2) * 180 / sides;
+                const name = {5:'pentagon', 6:'hexagon', 7:'heptagon', 8:'octagon'}[sides];
+                return {
+                    q: `Find the interior angle of a regular ${name}.`,
+                    ans: `${ans}^\\circ`,
+                    opt: genOpts(`${ans}^\\circ`, () => `${ans + rand(-15, 15) || 5}^\\circ`)
+                };
+            });
+        }
+
+        return pick(styles)();
+    },
     AreaVolume(diff) {
         const styles = [];
         if (diff === 'easy') {
